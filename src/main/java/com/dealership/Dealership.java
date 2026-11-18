@@ -1,0 +1,164 @@
+package com.dealership;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class Dealership {
+    private String name;
+    private String address;
+    private String phone;
+    final ArrayList<Vehicle> inventory;
+    final ArrayList<Contract> contracts;
+
+    public String getName() {
+        return "Homestead Motors";
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return "482 Oak Ridge Drive, Homestead, FL 33033";
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return "305-555-0187";
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Dealership(String name, String address, String phone) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.inventory = new ArrayList<>();
+        this.contracts = new ArrayList<>();
+    }
+
+    public List<Vehicle> getVehiclesByPrice(BigDecimal min, BigDecimal max, boolean lowToHigh) {
+        List<Vehicle> withinPrice = new ArrayList<>();
+
+        for (Vehicle cars : inventory) {
+            BigDecimal price = cars.getPrice();
+
+            if (price.compareTo(min) >= 0 && price.compareTo(max) <= 0) {
+                withinPrice.add(cars);
+            }
+        }
+        setSortingOrder(lowToHigh, withinPrice, Comparator.comparing(Vehicle::getPrice));
+        return withinPrice;
+    }
+
+    public List<Vehicle> getVehiclesByMakeModel(String make, String model, boolean lowToHigh) {
+        List<Vehicle> byMakeModel = new ArrayList<>();
+
+        for (Vehicle cars : inventory) {
+
+            if ((make.equalsIgnoreCase(cars.getMake()) && model.isEmpty())) {
+                byMakeModel.add(cars);
+            } else if (make.equalsIgnoreCase(cars.getMake()) && model.equalsIgnoreCase(cars.getModel())) {
+                byMakeModel.add(cars);
+
+            }
+        }
+        setSortingOrder(lowToHigh, byMakeModel, Comparator.comparing(Vehicle::getModel).thenComparing(Vehicle::getPrice));
+        return byMakeModel;
+    }
+
+    public List<Vehicle> getVehiclesBySingleYear(int year) {
+        List<Vehicle> withinYear = new ArrayList<>();
+
+            for (Vehicle cars : inventory) {
+                if (year == cars.getYear()) {
+                    withinYear.add(cars);
+            }
+        }
+        return withinYear;
+    }
+    public List<Vehicle> getVehiclesByMultiYear(int year1, int year2, boolean lowToHigh) {
+        List<Vehicle> withinYear = new ArrayList<>();
+
+            for (Vehicle cars : inventory) {
+                if (cars.getYear() >= year1 && cars.getYear() <= year2) {
+                    withinYear.add(cars);
+                }
+            }
+        setSortingOrder(lowToHigh, withinYear, Comparator.comparing(Vehicle::getYear));
+        return withinYear;
+    }
+
+    public List<Vehicle> getVehiclesByColor(String color, boolean lowToHigh) {
+        List<Vehicle> byColor = new ArrayList<>();
+
+        for (Vehicle cars : inventory) {
+
+            if (color.equalsIgnoreCase(cars.getColor())) {
+                byColor.add(cars);
+            }
+        }
+        setSortingOrder(lowToHigh, byColor, Comparator.comparing(Vehicle::getMake).thenComparing(Vehicle::getModel));
+        return byColor;
+    }
+
+    public List<Vehicle> getVehiclesByMileage(int min, int max, boolean lowToHigh) {
+        List<Vehicle> withinMileage = new ArrayList<>();
+
+        for (Vehicle cars : inventory) {
+            int odometer = cars.getOdometer();
+
+            if (odometer >= min && odometer <= max) {
+                withinMileage.add(cars);
+            }
+        }
+        setSortingOrder(lowToHigh, withinMileage, Comparator.comparing(Vehicle::getOdometer).thenComparing(Vehicle::getMake).thenComparing(Vehicle::getModel));
+        return withinMileage;
+    }
+
+    //Overloaded methods consider user filtering for multiple vehicle types, up to 3.
+    public List<Vehicle> getVehiclesByType(boolean lowToHigh, String... inputTypes) {
+        List<Vehicle> byType = new ArrayList<>();
+
+        for (Vehicle vehicle : inventory) {
+            for (String type : inputTypes) {
+                if (vehicle.getVehicleType().equalsIgnoreCase(type)) {
+                    byType.add(vehicle);
+                    break;
+                }
+            }
+        }
+
+        setSortingOrder(lowToHigh, byType, Comparator.comparing(Vehicle::getVehicleType).thenComparing(Vehicle::getMake).thenComparing(Vehicle::getModel));
+        return byType;
+    }
+
+    public List<Vehicle> getAllVehicles() {
+
+        return inventory;
+    }
+    public List<Contract> getAllContracts(){
+
+        return contracts;
+    }
+
+    public void addVehicle(Vehicle vehicle) {
+        inventory.add(vehicle);
+    }
+
+    public void removeVehicle(Vehicle vehicle) {
+        inventory.remove(vehicle);
+    }
+
+    public void setSortingOrder(boolean lowToHigh, List<Vehicle> processMenu, Comparator<Vehicle> filter) {
+        processMenu.sort(lowToHigh ? filter : filter.reversed());
+
+    }
+}
