@@ -577,7 +577,11 @@ public class UserInterface {
             System.out.println("Vehicle is not in inventory.");
         }
     }
-    private void process
+
+    private void processAddContract() {
+        int vehicleToPurchase = Console.promptForInt("Enter the VIN of the vehicle you're interested in.");
+
+    }
 
     private boolean processSetSortingOrder() {
 

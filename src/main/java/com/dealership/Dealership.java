@@ -157,6 +157,8 @@ public class Dealership {
         inventory.remove(vehicle);
     }
 
+    public void addContract()
+
     public void setSortingOrder(boolean lowToHigh, List<Vehicle> processMenu, Comparator<Vehicle> filter) {
         processMenu.sort(lowToHigh ? filter : filter.reversed());
 
